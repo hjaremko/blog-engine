@@ -74,6 +74,7 @@ ul.header li a {
 .titlebar {
     display: flex;
     justify-content: space-between;
+    padding-bottom: 5px;
 }
 
 .post-title {
@@ -100,4 +101,9 @@ ul.header li a {
     padding: 10px;
     font-size: small;
     color: steelblue;
+}
+
+.post-footer {
+    display: flex;
+    justify-content: space-between;
 }

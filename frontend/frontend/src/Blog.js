@@ -28,6 +28,18 @@ class Blog extends Component {
     }
 
     renderPost(post, key) {
+        function addHtmlNewlines(content) {
+            let newContent = "";
+            let objects = content.split("\n");
+
+            for (let i = 0; i < objects.length; i++) {
+                newContent += objects[i];
+                newContent += "<br>";
+            }
+
+            return newContent;
+        }
+
         return (
             <div className="blogpost" key={key}>
                 <div className='post-header'>
@@ -37,9 +49,15 @@ class Blog extends Component {
                     </div>
                     <span className='post-author'><i className="fas fa-user-alt"></i> {post.author.name}</span>
                 </div>
-                <div className='post-content' dangerouslySetInnerHTML={{__html: post.content}}/>
-                <div className='comment-link'>
-                    Komentarze (0)
+                <div className='post-content' dangerouslySetInnerHTML={{__html: addHtmlNewlines(post.content)}}/>
+                <div className='post-footer'>
+                    <div className='comment-link'>
+                        Komentarze (0)
+                    </div>
+                    <div className='comment-link'>
+                        Edytuj
+                        Usuń
+                    </div>
                 </div>
             </div>
         )
@@ -52,9 +70,9 @@ class Blog extends Component {
             </div>
         );
 
-        if (list.length === 0) {
-            return ("Brak postów!")
-        }
+        // if (list.length === 0) {
+        //     return ("Brak postów!")
+        // }
 
         return (
             <div className="posts">
@@ -71,7 +89,6 @@ class Blog extends Component {
         return (
             <div>
                 {/*<h2>Blog</h2>*/}
-
                 {this.renderBlogPosts()}
             </div>
         );
