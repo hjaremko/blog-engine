@@ -1,5 +1,5 @@
-use serde::{Serialize, Deserialize};
 use rusqlite::types::{FromSql, FromSqlResult, ValueRef};
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum Rights {

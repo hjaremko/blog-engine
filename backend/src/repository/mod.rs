@@ -1,7 +1,7 @@
-use rusqlite::{Connection, Result, params};
-use std::rc::Rc;
 use crate::db::CONN;
-use crate::model::{Post, User, Rights};
+use crate::model::{Post, Rights, User};
+use rusqlite::{params, Connection, Result};
+use std::rc::Rc;
 
 pub struct UserRepository {}
 
@@ -41,9 +41,9 @@ impl PostsRepository {
         CONN.lock().unwrap().execute(
             "create table if not exists posts (
              id integer primary key,
-             date text not null,
+             date date not null,
              title text not null,
-             author text not null,
+             author integer not null,
              content text not null
          )",
             [],
@@ -53,8 +53,11 @@ impl PostsRepository {
 
     pub fn get_all() -> Result<Vec<Post>> {
         let conn = CONN.lock().unwrap();
-        let mut stmt = conn.prepare("select * from posts join users on posts.author")?;
-        // let mut stmt = conn.prepare("select * from posts")?;
+        let mut stmt = conn.prepare(
+            "select * from posts
+                 join users on posts.author
+                 order by date desc",
+        )?;
         let post_iter = stmt.query_map([], |row| {
             Ok(Post {
                 id: row.get(0)?,
@@ -85,4 +88,3 @@ impl PostsRepository {
         Ok(())
     }
 }
-

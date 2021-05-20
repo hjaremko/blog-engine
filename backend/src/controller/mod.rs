@@ -1,8 +1,8 @@
+use crate::model::{NewPostRequest, Post, Rights, User};
 use crate::service::PostsService;
 use rocket::response::content;
-use rocket::Request;
 use rocket::response::content::Json;
-use crate::model::{Post, NewPostRequest, User, Rights};
+use rocket::Request;
 
 #[get("/posts")]
 pub fn all_posts() -> content::Json<String> {
