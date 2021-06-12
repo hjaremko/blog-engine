@@ -1,5 +1,6 @@
 use rusqlite::types::{FromSql, FromSqlResult, ValueRef};
 use serde::{Deserialize, Serialize};
+use std::str::FromStr;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum Rights {
@@ -8,9 +9,36 @@ pub enum Rights {
     Common,
 }
 
+impl ToString for Rights {
+    fn to_string(&self) -> String {
+        match self {
+            Rights::Administrator => { "ADMIN" }
+            Rights::Moderator => { "MOD" }
+            Rights::Common => { "USER" }
+        }.to_string()
+    }
+}
+
+impl FromStr for Rights {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "ADMIN" => Ok(Rights::Administrator),
+            "MOD" => Ok(Rights::Moderator),
+            "USER" => Ok(Rights::Common),
+            _ => Err(())
+        }
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct User {
     pub id: i32,
+    #[serde(skip)]
+    pub login: String,
+    #[serde(skip)]
+    pub password: String,
     pub name: String,
     pub rights: Rights,
 }
@@ -29,6 +57,20 @@ pub struct NewPostRequest {
     pub author_id: i32,
     pub content: String,
 }
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct LoginRequest {
+    pub login: String,
+    pub password: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct RegisterRequest {
+    pub login: String,
+    pub password: String,
+    pub name: String,
+}
+
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Post {
@@ -49,6 +91,8 @@ impl Post {
                 id: 0,
                 name: "user".to_string(),
                 rights: Rights::Administrator,
+                password: "".to_string(),
+                login: "".to_string()
             },
             content: content.to_string(),
         }

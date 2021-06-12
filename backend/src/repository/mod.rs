@@ -1,7 +1,8 @@
 use crate::db::CONN;
-use crate::model::{Post, Rights, User, Comment};
+use crate::model::{Post, Rights, User, Comment, RegisterRequest};
 use rusqlite::{params, Connection, Result};
 use std::rc::Rc;
+use std::str::FromStr;
 
 pub struct UserRepository {}
 
@@ -10,8 +11,11 @@ impl UserRepository {
         CONN.lock().unwrap().execute(
             "create table if not exists users (
              id integer primary key,
+             login text not null,
+             password text not null,
              name text not null,
-             rights text not null
+             rights text not null,
+             unique (login)
          )",
             [],
         )?;
@@ -22,15 +26,29 @@ impl UserRepository {
         let conn = CONN.lock().unwrap();
         let mut stmt = conn.prepare("select * from users")?;
         let post_iter = stmt.query_map([], |row| {
+            let r: String = row.get(4)?;
             Ok(User {
                 id: row.get(0)?,
-                name: row.get(1)?,
-                // rights: row.get(2)?,
-                rights: Rights::Common,
+                login: row.get(1)?,
+                password: row.get(2)?,
+                name: row.get(3)?,
+                rights: Rights::from_str(&r).unwrap(),
             })
         })?;
 
         Ok(post_iter.map(|x| x.unwrap()).collect())
+    }
+
+    pub fn create(request: RegisterRequest) -> Result<()> {
+        let conn = CONN.lock().unwrap();
+
+        conn.execute(
+            "insert into users (name, login, password, rights)
+                values (?1, ?2, ?3, 'USER')",
+            params![request.name, request.login, request.password],
+        )?;
+
+        Ok(())
     }
 }
 
@@ -69,6 +87,8 @@ impl PostsRepository {
                     name: row.get(6)?,
                     rights: Rights::Administrator,
                     // rights: row.get(7)?,
+                    password: "".to_string(),
+                    login: "".to_string()
                 },
                 content: row.get(4)?,
             })
@@ -123,6 +143,8 @@ impl CommentsRepository {
                     id: row.get(5)?,
                     name: row.get(6)?,
                     rights: Rights::Administrator, // todo
+                    password: "".to_string(),
+                    login: "".to_string()
                 },
                 content: row.get(3)?,
             }

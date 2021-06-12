@@ -1,8 +1,10 @@
-use crate::model::{NewPostRequest, Post, Rights, User, Comment};
+use crate::model::{NewPostRequest, Post, Rights, User, Comment, RegisterRequest};
 use crate::repository::{PostsRepository, UserRepository, CommentsRepository};
 use chrono::{DateTime, Utc};
 
 pub struct UserService {}
+
+impl UserService {}
 
 impl UserService {
     pub fn get_all() -> Vec<User> {
@@ -14,6 +16,26 @@ impl UserService {
             id,
             name: "User".to_string(),
             rights: Rights::Common,
+            password: "".to_string(),
+            login: "".to_string(),
+        }
+    }
+
+    pub fn get_by_login(login: &str) -> User {
+        let users = UserRepository::get_all().unwrap();
+        let user = users.into_iter().find(|x| x.login == login).unwrap();
+
+        user
+    }
+
+    pub fn create(request: RegisterRequest) -> User {
+        UserRepository::create(request).unwrap();
+        User {
+            id: 0,
+            login: "".to_string(),
+            password: "".to_string(),
+            name: "".to_string(),
+            rights: Rights::Administrator,
         }
     }
 }

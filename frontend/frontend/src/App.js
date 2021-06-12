@@ -19,8 +19,8 @@ class App extends Component {
                         <li><NavLink exact to="/">Wpisy</NavLink></li>
                         <li><NavLink to="/contact">Kontakt</NavLink></li>
                         <li><NavLink to="/newpost">Dodaj post</NavLink></li>
-                        <li><NavLink to="/login">Logowanie</NavLink></li>
                         <li><NavLink to="/settings">Ustawienia</NavLink></li>
+                        <li><NavLink to="/login">Logowanie</NavLink></li>
                     </ul>
                     <div className="content">
                         <Route exact path="/" component={Blog}/>

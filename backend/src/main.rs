@@ -4,6 +4,7 @@ mod controller;
 mod model;
 mod repository;
 mod service;
+mod auth;
 
 #[macro_use]
 extern crate rocket;
@@ -19,6 +20,8 @@ use std::path::{Path, PathBuf};
 use std::rc::Rc;
 use rocket_cors::{AllowedOrigins, CorsOptions};
 use rocket::http::Method;
+use crate::auth::{create_jwt, auth_jwt};
+use crate::model::Rights;
 
 #[get("/")]
 fn index() -> Redirect {
@@ -44,6 +47,12 @@ fn main() {
     PostsRepository::init_tables().unwrap();
     CommentsRepository::init_tables().unwrap();
 
+    // let jwt = create_jwt("admin", "pass", &Rights::Moderator);
+    //
+    // println!("{:?}", jwt);
+    // let token = jwt.unwrap();
+    //
+    // auth_jwt(&token);
 
     let cors = CorsOptions::default()
         .allowed_origins(AllowedOrigins::all())
@@ -57,7 +66,7 @@ fn main() {
 
     rocket::ignite()
         .mount("/", routes![index, build_dir])
-        .mount("/api", routes![all_posts, posts_page, new_post, get_comments])
+        .mount("/api", routes![all_posts, posts_page, new_post, get_comments, login, register])
         .attach(cors.to_cors().unwrap())
         .launch();
 }
