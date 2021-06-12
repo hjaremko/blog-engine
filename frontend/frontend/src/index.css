@@ -107,3 +107,9 @@ ul.header li a {
     display: flex;
     justify-content: space-between;
 }
+
+.parallax-image {
+    height: 120px;
+    width: 100%;
+    border-radius: 5px;
+}

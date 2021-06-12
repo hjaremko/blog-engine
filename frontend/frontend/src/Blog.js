@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import axios from 'axios';
+import {Parallax} from 'react-parallax';
 
 class Blog extends Component {
     constructor(props) {
@@ -58,6 +59,18 @@ class Blog extends Component {
             })
     }
 
+
+    renderParallax() {
+        return (
+            <div>
+                <Parallax blur={0} bgImage="/img/galaxy.jfif" bgImageAlt="galaxy" strength={600}
+                          className="parallax-image">
+                    .
+                </Parallax>
+            </div>
+        );
+    }
+
     renderPost(post, key) {
         function addHtmlNewlines(content) {
             let newContent = "";
@@ -90,6 +103,7 @@ class Blog extends Component {
                         Usuń
                     </div>
                 </div>
+                {this.renderParallax()}
             </div>
         )
     }
