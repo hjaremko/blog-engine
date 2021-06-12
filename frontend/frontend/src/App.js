@@ -15,10 +15,12 @@ class App extends Component {
                 <div>
                     <h1>Blog</h1>
                     <ul className="header">
-                        <li><NavLink exact to="/">Home</NavLink></li>
+                        <li><NavLink exact to="/">Wpisy</NavLink></li>
                         {/*<li><NavLink to="/blog">Blog</NavLink></li>*/}
-                        <li><NavLink to="/newpost">Dodaj post</NavLink></li>
                         <li><NavLink to="/contact">Kontakt</NavLink></li>
+                        <li><NavLink to="/newpost">Dodaj post</NavLink></li>
+                        <li><NavLink to="/login">Logowanie</NavLink></li>
+                        <li><NavLink to="/settings">Ustawienia</NavLink></li>
                     </ul>
                     <div className="content">
                         <Route exact path="/" component={Blog}/>

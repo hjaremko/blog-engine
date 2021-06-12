@@ -6,13 +6,33 @@ class Blog extends Component {
         super(props);
 
         this.state = {
-            posts: []
+            posts: [],
+            error: '',
+            loading: true
         };
 
+
         this.getBlogPosts = this.getBlogPosts.bind(this);
+        this.renderBlogPosts = this.renderBlogPosts.bind(this);
+    }
+
+    renderSpinner() {
+        if (!this.state.loading) {
+            return;
+        }
+
+        return (
+            <div className="d-flex justify-content-center">
+                <div className="spinner-border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        )
     }
 
     getBlogPosts() {
+        this.setState({loading: true});
+
         // let url = '/api/posts/';
         let url = 'http://localhost:8000/api/posts/';
         axios.get(url)
@@ -20,10 +40,12 @@ class Blog extends Component {
                 console.log(res);
 
                 let posts = res.data;
-                this.setState({posts});
+                this.setState({posts, loading: false});
             })
-            .catch(function (error) {
-                console.log('Error: ', error.message);
+            .catch((e) => {
+                console.log('Error: ', e.message);
+                let error = e.message;
+                this.setState({error: error, loading: false});
             })
     }
 
@@ -64,15 +86,27 @@ class Blog extends Component {
     }
 
     renderBlogPosts() {
+        if (this.state.loading) {
+            return;
+        }
+
+        if (this.state.error !== '') {
+            return (
+                <div className="posts">
+                    Error loading posts, sorry!
+                </div>
+            )
+        }
+
         const list = this.state.posts.map((post) =>
             <div key={post.id}>
                 {this.renderPost(post)}
             </div>
         );
 
-        // if (list.length === 0) {
-        //     return ("Brak postów!")
-        // }
+        if (list.length === 0) {
+            return ("Brak postów!")
+        }
 
         return (
             <div className="posts">
@@ -88,7 +122,7 @@ class Blog extends Component {
     render() {
         return (
             <div>
-                {/*<h2>Blog</h2>*/}
+                {this.renderSpinner()}
                 {this.renderBlogPosts()}
             </div>
         );

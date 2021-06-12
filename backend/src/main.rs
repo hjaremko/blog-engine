@@ -17,6 +17,8 @@ use rusqlite::{Connection, Result};
 use std::io;
 use std::path::{Path, PathBuf};
 use std::rc::Rc;
+use rocket_cors::{AllowedOrigins, CorsOptions};
+use rocket::http::Method;
 
 #[get("/")]
 fn index() -> Redirect {
@@ -41,8 +43,20 @@ fn main() {
     UserRepository::init_tables().unwrap();
     PostsRepository::init_tables().unwrap();
 
+
+    let cors = CorsOptions::default()
+        .allowed_origins(AllowedOrigins::all())
+        .allowed_methods(
+            vec![Method::Get, Method::Post, Method::Patch]
+                .into_iter()
+                .map(From::from)
+                .collect(),
+        )
+        .allow_credentials(true);
+
     rocket::ignite()
         .mount("/", routes![index, build_dir])
         .mount("/api", routes![all_posts, new_post])
+        .attach(cors.to_cors().unwrap())
         .launch();
 }
