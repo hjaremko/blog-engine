@@ -35,8 +35,8 @@ class Blog extends Component {
     getBlogPosts(page, limit) {
         this.setState({loading: true});
 
-        let url = `/api/posts/?page=${page}&limit=${limit}`;
-        // let url = `http://localhost:8000/api/posts?page=${page}&limit=${limit}`;
+        // let url = `/api/posts/?page=${page}&limit=${limit}`;
+        let url = `http://localhost:8000/api/posts?page=${page}&limit=${limit}`;
         axios.get(url)
             .then(res => {
                 let new_posts = res.data;
