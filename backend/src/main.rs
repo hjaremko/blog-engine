@@ -56,7 +56,7 @@ fn main() {
 
     rocket::ignite()
         .mount("/", routes![index, build_dir])
-        .mount("/api", routes![all_posts, new_post])
+        .mount("/api", routes![all_posts, posts_page, new_post])
         .attach(cors.to_cors().unwrap())
         .launch();
 }

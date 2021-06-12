@@ -8,9 +8,10 @@ class Blog extends Component {
         this.state = {
             posts: [],
             error: '',
-            loading: true
+            loading: true,
+            limit: 1,
+            page: 0,
         };
-
 
         this.getBlogPosts = this.getBlogPosts.bind(this);
         this.renderBlogPosts = this.renderBlogPosts.bind(this);
@@ -23,29 +24,37 @@ class Blog extends Component {
 
         return (
             <div className="d-flex justify-content-center">
-                <div className="spinner-border" role="status">
+                <div className="spinner-border" role="status" ref={loadingRef => (this.loadingRef = loadingRef)}>
                     <span className="visually-hidden">Loading...</span>
                 </div>
             </div>
         )
     }
 
-    getBlogPosts() {
+    getBlogPosts(page, limit) {
         this.setState({loading: true});
 
-        // let url = '/api/posts/';
-        let url = 'http://localhost:8000/api/posts/';
+        let url = `/api/posts/?page=${page}&limit=${limit}`;
+        // let url = `http://localhost:8000/api/posts?page=${page}&limit=${limit}`;
         axios.get(url)
             .then(res => {
-                console.log(res);
+                let new_posts = res.data;
 
-                let posts = res.data;
-                this.setState({posts, loading: false});
+                if (new_posts.length === 0) {
+                    console.log("No new posts!");
+                    this.setState({loading: false});
+                    return;
+                }
+
+                let posts = this.state.posts.concat(new_posts);
+                console.log('Loaded ' + posts.length + ' posts');
+                this.setState({posts});
             })
             .catch((e) => {
                 console.log('Error: ', e.message);
                 let error = e.message;
-                this.setState({error: error, loading: false});
+                this.setState({error: error});
+                this.setState({loading: false});
             })
     }
 
@@ -86,10 +95,6 @@ class Blog extends Component {
     }
 
     renderBlogPosts() {
-        if (this.state.loading) {
-            return;
-        }
-
         if (this.state.error !== '') {
             return (
                 <div className="posts">
@@ -115,15 +120,35 @@ class Blog extends Component {
         )
     }
 
+    handleObserver(entities, observer) {
+        if (this.state.loading) {
+            this.setState({page: this.state.page + 1})
+            this.getBlogPosts(this.state.page, this.state.limit)
+        }
+    }
+
     componentDidMount() {
-        this.getBlogPosts()
+        this.getBlogPosts(this.state.page, this.state.limit)
+
+        var options = {
+            root: null,
+            rootMargin: "0px",
+            threshold: 1.0
+        };
+
+        let observer = new IntersectionObserver(
+            this.handleObserver.bind(this),
+            options
+        );
+
+        observer.observe(this.loadingRef);
     }
 
     render() {
         return (
             <div>
-                {this.renderSpinner()}
                 {this.renderBlogPosts()}
+                {this.renderSpinner()}
             </div>
         );
     }

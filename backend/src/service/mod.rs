@@ -25,6 +25,19 @@ impl PostsService {
         PostsRepository::get_all().unwrap()
     }
 
+    pub fn get_page(page_number: usize, posts_per_page: usize) -> Vec<Post> {
+        let all_posts = PostsRepository::get_all().unwrap();
+        let mut pages = all_posts.chunks(posts_per_page);
+
+        let page = pages.nth(page_number);
+
+        if let None = page {
+            return vec![];
+        }
+
+        page.unwrap().into()
+    }
+
     pub fn add_post(request: NewPostRequest) -> Post {
         let author = UserService::get(request.author_id);
 

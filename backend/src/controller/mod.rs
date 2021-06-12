@@ -11,6 +11,15 @@ pub fn all_posts() -> content::Json<String> {
     content::Json(json)
 }
 
+
+#[get("/posts?<page>&<limit>")]
+pub fn posts_page(page: usize, limit: usize) -> content::Json<String> {
+    let posts = PostsService::get_page(page, limit);
+    let json = serde_json::to_string(&posts).unwrap();
+    content::Json(json)
+}
+
+
 #[post("/posts", format = "json", data = "<input>")]
 pub fn new_post(input: rocket_contrib::json::Json<NewPostRequest>) -> content::Json<String> {
     let request = input.into_inner();
