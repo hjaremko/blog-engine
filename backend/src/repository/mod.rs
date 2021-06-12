@@ -1,5 +1,5 @@
 use crate::db::CONN;
-use crate::model::{Post, Rights, User};
+use crate::model::{Post, Rights, User, Comment};
 use rusqlite::{params, Connection, Result};
 use std::rc::Rc;
 
@@ -88,3 +88,48 @@ impl PostsRepository {
         Ok(())
     }
 }
+
+
+pub struct CommentsRepository {}
+
+impl CommentsRepository {
+    pub fn init_tables() -> Result<()> {
+        CONN.lock().unwrap().execute(
+            "create table if not exists comments (
+             id integer primary key,
+             date date not null,
+             author_id integer not null references users (id),
+             content text not null,
+             post_id integer not null references posts (id)
+         )",
+            [],
+        )?;
+        Ok(())
+    }
+
+    pub fn get_all_from_post(post_id: usize) -> Result<Vec<Comment>> {
+        let conn = CONN.lock().unwrap();
+        let mut stmt = conn.prepare(
+            "select * from comments
+                 join users u on comments.author_id = u.id
+                 where post_id = ?1"
+        )?;
+
+        let comment_iter = stmt.query_map([post_id], |row| {
+            Ok(Comment {
+                id: row.get(0)?,
+                date: row.get(1)?,
+                author: User {
+                    id: row.get(5)?,
+                    name: row.get(6)?,
+                    rights: Rights::Administrator, // todo
+                },
+                content: row.get(3)?,
+            }
+            )
+        })?;
+
+        Ok(comment_iter.map(|x| x.unwrap()).collect())
+    }
+}
+

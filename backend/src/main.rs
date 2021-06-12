@@ -10,7 +10,7 @@ extern crate rocket;
 
 use crate::controller::*;
 use crate::db::CONN;
-use crate::repository::{PostsRepository, UserRepository};
+use crate::repository::{PostsRepository, UserRepository, CommentsRepository};
 use crate::service::PostsService;
 use rocket::response::{NamedFile, Redirect};
 use rusqlite::{Connection, Result};
@@ -25,7 +25,7 @@ fn index() -> Redirect {
     Redirect::permanent("/index.html")
 }
 
-#[get("/<file..>")]
+#[get("/<file..>", rank = 2)]
 fn build_dir(file: PathBuf) -> io::Result<NamedFile> {
     NamedFile::open(Path::new("../frontend/frontend/build/").join(file))
 }
@@ -42,6 +42,7 @@ pub mod db {
 fn main() {
     UserRepository::init_tables().unwrap();
     PostsRepository::init_tables().unwrap();
+    CommentsRepository::init_tables().unwrap();
 
 
     let cors = CorsOptions::default()
@@ -56,7 +57,7 @@ fn main() {
 
     rocket::ignite()
         .mount("/", routes![index, build_dir])
-        .mount("/api", routes![all_posts, posts_page, new_post])
+        .mount("/api", routes![all_posts, posts_page, new_post, get_comments])
         .attach(cors.to_cors().unwrap())
         .launch();
 }

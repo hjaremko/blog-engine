@@ -1,5 +1,5 @@
-use crate::model::{NewPostRequest, Post, Rights, User};
-use crate::repository::{PostsRepository, UserRepository};
+use crate::model::{NewPostRequest, Post, Rights, User, Comment};
+use crate::repository::{PostsRepository, UserRepository, CommentsRepository};
 use chrono::{DateTime, Utc};
 
 pub struct UserService {}
@@ -56,5 +56,13 @@ impl PostsService {
 
         PostsRepository::add_post(&post).unwrap();
         post
+    }
+}
+
+pub struct CommentsService {}
+
+impl CommentsService {
+    pub fn get_all(post_id: usize) -> Vec<Comment> {
+        CommentsRepository::get_all_from_post(post_id).unwrap()
     }
 }

@@ -8,6 +8,7 @@ class Blog extends Component {
 
         this.state = {
             posts: [],
+            comments: {},
             error: '',
             loading: true,
             limit: 1,
@@ -39,15 +40,15 @@ class Blog extends Component {
         let url = `http://localhost:8000/api/posts?page=${page}&limit=${limit}`;
         axios.get(url)
             .then(res => {
-                let new_posts = res.data;
+                let newPosts = res.data;
 
-                if (new_posts.length === 0) {
+                if (newPosts.length === 0) {
                     console.log("No new posts!");
                     this.setState({loading: false});
                     return;
                 }
 
-                let posts = this.state.posts.concat(new_posts);
+                let posts = this.state.posts.concat(newPosts);
                 console.log('Loaded ' + posts.length + ' posts');
                 this.setState({posts});
             })
@@ -59,16 +60,90 @@ class Blog extends Component {
             })
     }
 
+    getComments(postId) {
+        let url = `http://localhost:8000/api/posts/comments/${postId}`;
 
-    renderParallax() {
+        axios.get(url)
+            .then(res => {
+                let comments = res.data;
+                let newComment = {[postId]: comments};
+                let newComments = {...this.state.comments, ...newComment};
+                this.setState({comments: newComments});
+            })
+            .catch((e) => {
+                console.log('Error: ', e.message);
+            })
+    }
+
+    renderParallax(content) {
         return (
             <div>
                 <Parallax blur={0} bgImage="/img/galaxy.jfif" bgImageAlt="galaxy" strength={600}
                           className="parallax-image">
-                    .
+                    <div className="par-header">
+                        {content}
+                    </div>
                 </Parallax>
             </div>
         );
+    }
+
+    expandComments(e, idx) {
+        const acc = e.target;
+        const panel = acc.nextElementSibling;
+        if (panel.style.maxHeight) {
+            panel.style.maxHeight = null;
+        } else {
+            panel.style.maxHeight = panel.scrollHeight + "px";
+        }
+
+        this.getComments(idx);
+    }
+
+    renderComment(comment, id) {
+        return (
+            <div key={id}>
+                <div className='titlebar'>
+                    <span className='post-author'><i className="fas fa-user-alt"></i> {comment.author.name}</span>
+                    <span className='post-date'>{comment.date} <i className="far fa-calendar-alt"></i></span>
+                </div>
+                {comment.content}
+            </div>
+        )
+    }
+
+    renderComments(idx) {
+        let comment = this.state.comments[idx];
+
+        if (comment == null) {
+            return;
+        }
+
+        return comment.map((comment) => {
+            return (
+                <div key={comment.id}>
+                    <div>
+                        {this.renderComment(comment, comment.id)}
+                    </div>
+                </div>
+            )
+        });
+    }
+
+    showComments(idx) {
+        let c = this.state.comments[idx];
+        let commentAmount = c == null ? 0 : c.length;
+
+        return (
+            <div>
+                <button className="accordion" onClick={(e) => this.expandComments(e, idx)}>Komentarze
+                    ({commentAmount})
+                </button>
+                <div className="comment-panel">
+                    {this.renderComments(idx)}
+                </div>
+            </div>
+        )
     }
 
     renderPost(post, key) {
@@ -87,23 +162,14 @@ class Blog extends Component {
         return (
             <div className="blogpost" key={key}>
                 <div className='post-header'>
+                    {this.renderParallax(post.title)}
                     <div className='titlebar'>
-                        <span className='post-title'>{post.title}</span>
+                        <span className='post-author'><i className="fas fa-user-alt"></i> {post.author.name}</span>
                         <span className='post-date'>{post.date} <i className="far fa-calendar-alt"></i></span>
                     </div>
-                    <span className='post-author'><i className="fas fa-user-alt"></i> {post.author.name}</span>
                 </div>
                 <div className='post-content' dangerouslySetInnerHTML={{__html: addHtmlNewlines(post.content)}}/>
-                <div className='post-footer'>
-                    <div className='comment-link'>
-                        Komentarze (0)
-                    </div>
-                    <div className='comment-link'>
-                        Edytuj
-                        Usuń
-                    </div>
-                </div>
-                {this.renderParallax()}
+                {this.showComments(key)}
             </div>
         )
     }
@@ -117,11 +183,13 @@ class Blog extends Component {
             )
         }
 
-        const list = this.state.posts.map((post) =>
-            <div key={post.id}>
-                {this.renderPost(post)}
-            </div>
-        );
+        const list = this.state.posts.map((post) => {
+            return (
+                <div key={post.id}>
+                    {this.renderPost(post, post.id)}
+                </div>
+            )
+        });
 
         if (list.length === 0) {
             return ("Brak postów!")
@@ -138,13 +206,14 @@ class Blog extends Component {
         if (this.state.loading) {
             this.setState({page: this.state.page + 1})
             this.getBlogPosts(this.state.page, this.state.limit)
+            this.loadComments()
         }
     }
 
     componentDidMount() {
         this.getBlogPosts(this.state.page, this.state.limit)
 
-        var options = {
+        const options = {
             root: null,
             rootMargin: "0px",
             threshold: 1.0
@@ -165,6 +234,12 @@ class Blog extends Component {
                 {this.renderSpinner()}
             </div>
         );
+    }
+
+    loadComments() {
+        this.state.posts.forEach((post) => {
+            this.getComments(post.id);
+        });
     }
 }
 

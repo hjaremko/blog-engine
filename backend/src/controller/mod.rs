@@ -1,5 +1,6 @@
 use crate::model::{NewPostRequest, Post, Rights, User};
 use crate::service::PostsService;
+use crate::service::CommentsService;
 use rocket::response::content;
 use rocket::response::content::Json;
 use rocket::Request;
@@ -25,5 +26,12 @@ pub fn new_post(input: rocket_contrib::json::Json<NewPostRequest>) -> content::J
     let request = input.into_inner();
     let post = PostsService::add_post(request);
     let json = serde_json::to_string(&post).unwrap();
+    content::Json(json)
+}
+
+#[get("/posts/comments/<post_id>")]
+pub fn get_comments(post_id: usize) -> content::Json<String> {
+    let comment = CommentsService::get_all(post_id);
+    let json = serde_json::to_string(&comment).unwrap();
     content::Json(json)
 }

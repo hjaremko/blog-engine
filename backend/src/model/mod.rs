@@ -15,11 +15,12 @@ pub struct User {
     pub rights: Rights,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Comment {
-    id: i32,
-    author: User,
-    content: String,
+    pub id: i32,
+    pub date: String,
+    pub author: User,
+    pub content: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

@@ -68,13 +68,14 @@ ul.header li a {
 
 .post-header {
     border-bottom: 1px solid lightgrey;
-    padding: 15px;
+    /*padding: 15px;*/
 }
 
 .titlebar {
     display: flex;
     justify-content: space-between;
-    padding-bottom: 5px;
+    /*padding-bottom: 5px;*/
+    margin-top: 8px;
 }
 
 .post-title {
@@ -84,7 +85,7 @@ ul.header li a {
 
 .post-date {
     font-size: small;
-    margin-top: 8px;
+    /*margin-top: 8px;*/
     color: darkgray;
 }
 
@@ -109,7 +110,61 @@ ul.header li a {
 }
 
 .parallax-image {
-    height: 120px;
+    height: 80px;
     width: 100%;
     border-radius: 5px;
 }
+
+.par-header {
+    color: #FFFFFF;
+    font-weight: bold;
+    font-size: x-large;
+    text-align: center;
+    /*border: 2px solid red;*/
+    margin: 20px;
+}
+
+.accordion {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 5px 5px 5px 10px;
+    margin-bottom: 5px;
+    width: 100%;
+    text-align: left;
+    border: none;
+    outline: none;
+    transition: 0.4s;
+    border-radius: 5px;
+}
+
+.accordion:active, .accordion:hover {
+    background-color: #ccc;
+}
+
+.comment-panel {
+    padding: 0 5px;
+    background-color: white;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+}
+
+.comment-panel > p {
+    padding: 3px;
+    /*border: 1px solid #282c34;*/
+    border-radius: 5px;
+
+}
+
+/*.accordion:after {*/
+/*  content: '+'; !* Unicode character for "plus" sign (+) *!*/
+/*  font-size: 13px;*/
+/*  color: #777;*/
+/*  float: right;*/
+/*  margin-left: 5px;*/
+/*}*/
+
+/*.active:after {*/
+/*  content: "-"; !* Unicode character for "minus" sign (-) *!*/
+/*}*/
