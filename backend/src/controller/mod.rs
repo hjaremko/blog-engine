@@ -1,5 +1,5 @@
 use crate::auth::{create_jwt, Credentials};
-use crate::model::{LoginRequest, NewPostRequest, RegisterRequest, Rights};
+use crate::model::{LoginRequest, LoginResponse, NewPostRequest, RegisterRequest, Rights};
 use crate::service::CommentsService;
 use crate::service::{PostsService, UserService};
 use rocket::response::content;
@@ -49,7 +49,7 @@ pub fn get_comments(post_id: usize) -> content::Json<String> {
 #[post("/login", format = "json", data = "<input>")]
 pub fn login(
     input: rocket_contrib::json::Json<LoginRequest>,
-) -> Result<content::Plain<String>, Unauthorized<String>> {
+) -> Result<content::Json<String>, Unauthorized<String>> {
     let err = Err(Unauthorized(Option::from(
         "Invalid login or password".to_string(),
     )));
@@ -64,7 +64,12 @@ pub fn login(
 
     if request.login == user.login && request.password == user.password {
         let jwt = create_jwt(&user.login, &user.password, &user.rights).unwrap();
-        return Ok(content::Plain(jwt));
+        let response = LoginResponse {
+            token: jwt,
+            rights: user.rights.to_string(),
+        };
+        let response = serde_json::to_string(&response).unwrap();
+        return Ok(content::Json(response));
     }
 
     err

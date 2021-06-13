@@ -31,13 +31,11 @@ class Login extends Component {
             "login": this.state.loginInput,
             "password": this.state.passwordInput
         }, {headers}).then(res => {
-                console.log(res);
+                let token = res.data.token;
+                let rights = res.data.rights;
 
-                let token = res.data;
-                console.log(cookies.get('token'));
                 cookies.set('token', token, {path: '/'});
-                console.log(cookies.get('token'));
-
+                cookies.set('rights', rights, {path: '/'});
 
                 this.props.history.push('/');
                 window.location.reload();

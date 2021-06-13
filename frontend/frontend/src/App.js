@@ -18,19 +18,27 @@ class App extends Component {
     renderLoginButton() {
         let token = cookies.get('token');
         if (token != null) {
-            console.log("ok");
-
             return (
-                // <div>
-                    <NavLink to="/logout">Wyloguj</NavLink>
-                // </div>
+                <NavLink to="/logout">Wyloguj</NavLink>
             )
         }
 
         return (
-            // <div>
-                <NavLink to="/login">Zaloguj</NavLink>
-            // </div>
+            <NavLink to="/login">Zaloguj</NavLink>
+        )
+    }
+
+    renderNewPostButton() {
+        let token = cookies.get('token');
+        let rights = cookies.get('rights');
+        if (token != null && rights != null && rights === 'ADMIN') {
+            return (
+                <li><NavLink to="/newpost">Dodaj post</NavLink></li>
+            )
+        }
+
+        return (
+            <li/>
         )
     }
 
@@ -42,7 +50,8 @@ class App extends Component {
                     <ul className="header">
                         <li><NavLink exact to="/">Wpisy</NavLink></li>
                         <li><NavLink to="/contact">Kontakt</NavLink></li>
-                        <li><NavLink to="/newpost">Dodaj post</NavLink></li>
+                        {/*<li><NavLink to="/newpost">Dodaj post</NavLink></li>*/}
+                        {this.renderNewPostButton()}
                         {/*<li><NavLink to="/settings">Ustawienia</NavLink></li>*/}
                         {/*<li><NavLink to="/login">Logowanie</NavLink></li>*/}
                         <li>{this.renderLoginButton()}</li>

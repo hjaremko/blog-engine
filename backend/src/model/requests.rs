@@ -18,3 +18,9 @@ pub struct RegisterRequest {
     pub password: String,
     pub name: String,
 }
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct LoginResponse {
+    pub token: String,
+    pub rights: String,
+}
