@@ -92,7 +92,6 @@ class Post extends Component {
         axios.post(url,
             this.state.input
             , {headers}).then(res => {
-                console.log(res);
                 this.getComments(idx);
                 this.setState({input: ""});
             }

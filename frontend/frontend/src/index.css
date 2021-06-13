@@ -124,6 +124,15 @@ ul.header li a {
     margin: 20px;
 }
 
+.par-header a {
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+.par-header a:hover {
+    color: #cccccc;
+}
+
 .accordion {
     background-color: #eee;
     color: #444;

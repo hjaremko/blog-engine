@@ -44,13 +44,12 @@ class Blog extends Component {
                 let newPosts = res.data;
 
                 if (newPosts.length === 0) {
-                    console.log("No new posts!");
                     this.setState({loading: false});
                     return;
                 }
 
                 let posts = this.state.posts.concat(newPosts);
-                console.log('Loaded ' + posts.length + ' posts');
+                // console.log('Loaded ' + posts.length + ' posts');
                 this.setState({posts});
             })
             .catch((e) => {
@@ -77,13 +76,11 @@ class Blog extends Component {
     }
 
     renderParallax(post) {
-        // console.log(post);
         return (
             <div>
                 <Parallax blur={0} bgImage="/img/galaxy.jfif" bgImageAlt="galaxy" strength={600}
                           className="parallax-image">
                     <div className="par-header">
-                        {/*<NavLink to="/post">{content}</NavLink>*/}
                         <Link to={{
                             pathname: '/post',
                             postContent: {...post}

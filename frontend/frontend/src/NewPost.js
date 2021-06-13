@@ -31,7 +31,6 @@ class NewPost extends Component {
             "author_id": 1,
             "content": this.state.contentInput
         }, {headers}).then(res => {
-                console.log(res);
                 this.props.history.push('/');
             }
         ).catch(function (error) {

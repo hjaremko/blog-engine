@@ -5,12 +5,12 @@ import {
     NavLink,
     HashRouter
 } from "react-router-dom";
+import {Redirect} from 'react-router'
 
 import Blog from "./Blog";
 import NewPost from "./NewPost";
 import Contact from "./Contact";
 import Login from "./Login";
-import Logout from "./Logout";
 import Post from "./Post";
 
 const cookies = new Cookies();
@@ -20,7 +20,9 @@ class App extends Component {
         let token = cookies.get('token');
         if (token != null) {
             return (
-                <NavLink to="/logout">Wyloguj</NavLink>
+                <a onClick={this.logout} href={<Redirect to='/'/>}>
+                    Wyloguj
+                </a>
             )
         }
 
@@ -43,6 +45,11 @@ class App extends Component {
         )
     }
 
+    logout() {
+        cookies.remove('token');
+        window.location.reload();
+    }
+
     render() {
         return (
             <HashRouter>
@@ -59,7 +66,6 @@ class App extends Component {
                         <Route path="/newpost" component={NewPost}/>
                         <Route path="/contact" component={Contact}/>
                         <Route path="/login" component={Login}/>
-                        <Route path="/logout" component={Logout}/>
                         <Route path="/post" component={Post}/>
                     </div>
                 </div>
