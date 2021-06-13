@@ -46,6 +46,18 @@ pub fn get_comments(post_id: usize) -> content::Json<String> {
     content::Json(json)
 }
 
+#[post("/posts/comments/<post_id>", format = "plain", data = "<input>")]
+pub fn new_comment(
+    credentials: Credentials,
+    post_id: usize,
+    input: String,
+) -> content::Json<String> {
+    let user = UserService::get_by_login(&credentials.login).unwrap();
+    let comment = CommentsService::create(post_id, input, user);
+    let json = serde_json::to_string(&comment).unwrap();
+    content::Json(json)
+}
+
 #[post("/login", format = "json", data = "<input>")]
 pub fn login(
     input: rocket_contrib::json::Json<LoginRequest>,

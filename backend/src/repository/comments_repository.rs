@@ -1,5 +1,6 @@
 use crate::db::CONN;
 use crate::model::{Comment, Rights, User};
+use rusqlite::params;
 use rusqlite::Result;
 use std::str::FromStr;
 
@@ -45,5 +46,15 @@ impl CommentsRepository {
         })?;
 
         Ok(comment_iter.map(|x| x.unwrap()).collect())
+    }
+
+    pub fn create(post_id: usize, comment: &Comment) -> Result<()> {
+        let conn = CONN.lock().unwrap();
+        conn.execute(
+            "insert into comments (date, author_id, content, post_id) values (?1, ?2, ?3, ?4)",
+            params![comment.date, comment.author.id, comment.content, post_id],
+        )?;
+
+        Ok(())
     }
 }

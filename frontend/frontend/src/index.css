@@ -85,7 +85,6 @@ ul.header li a {
 
 .post-date {
     font-size: small;
-    /*margin-top: 8px;*/
     color: darkgray;
 }
 
@@ -96,6 +95,7 @@ ul.header li a {
 
 .post-content {
     padding: 20px;
+    /*border-bottom: 1px solid lightgrey;*/
 }
 
 .comment-link {

@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import axios from 'axios';
 import {Parallax} from 'react-parallax';
+import {Link} from "react-router-dom";
 
 class Blog extends Component {
     constructor(props) {
@@ -75,13 +76,18 @@ class Blog extends Component {
             })
     }
 
-    renderParallax(content) {
+    renderParallax(post) {
+        // console.log(post);
         return (
             <div>
                 <Parallax blur={0} bgImage="/img/galaxy.jfif" bgImageAlt="galaxy" strength={600}
                           className="parallax-image">
                     <div className="par-header">
-                        {content}
+                        {/*<NavLink to="/post">{content}</NavLink>*/}
+                        <Link to={{
+                            pathname: '/post',
+                            postContent: {...post}
+                        }}>{post.title}</Link>
                     </div>
                 </Parallax>
             </div>
@@ -162,7 +168,7 @@ class Blog extends Component {
         return (
             <div className="blogpost" key={key}>
                 <div className='post-header'>
-                    {this.renderParallax(post.title)}
+                    {this.renderParallax(post)}
                     <div className='titlebar'>
                         <span className='post-author'><i className="fas fa-user-alt"></i> {post.author.name}</span>
                         <span className='post-date'>{post.date} <i className="far fa-calendar-alt"></i></span>

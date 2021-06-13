@@ -61,7 +61,8 @@ fn main() {
                 new_post,
                 get_comments,
                 login,
-                register
+                register,
+                new_comment
             ],
         )
         .attach(cors.to_cors().unwrap())

@@ -11,6 +11,7 @@ import NewPost from "./NewPost";
 import Contact from "./Contact";
 import Login from "./Login";
 import Logout from "./Logout";
+import Post from "./Post";
 
 const cookies = new Cookies();
 
@@ -50,19 +51,16 @@ class App extends Component {
                     <ul className="header">
                         <li><NavLink exact to="/">Wpisy</NavLink></li>
                         <li><NavLink to="/contact">Kontakt</NavLink></li>
-                        {/*<li><NavLink to="/newpost">Dodaj post</NavLink></li>*/}
                         {this.renderNewPostButton()}
-                        {/*<li><NavLink to="/settings">Ustawienia</NavLink></li>*/}
-                        {/*<li><NavLink to="/login">Logowanie</NavLink></li>*/}
                         <li>{this.renderLoginButton()}</li>
                     </ul>
                     <div className="content">
                         <Route exact path="/" component={Blog}/>
-                        {/*<Route path="/blog" component={Blog}/>*/}
                         <Route path="/newpost" component={NewPost}/>
                         <Route path="/contact" component={Contact}/>
                         <Route path="/login" component={Login}/>
                         <Route path="/logout" component={Logout}/>
+                        <Route path="/post" component={Post}/>
                     </div>
                 </div>
             </HashRouter>
