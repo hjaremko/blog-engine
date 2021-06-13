@@ -1,5 +1,8 @@
 import React, {Component} from "react";
 import axios from 'axios';
+import Cookies from 'universal-cookie';
+
+const cookies = new Cookies();
 
 class NewPost extends Component {
     constructor(props) {
@@ -17,7 +20,8 @@ class NewPost extends Component {
 
     sendNewPost() {
         const headers = {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + cookies.get('token')
         };
 
         // let url = '/api/posts/';

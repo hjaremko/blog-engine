@@ -33,7 +33,7 @@ pub fn new_post(
         )));
     }
 
-    let user = UserService::get_by_login(&credentials.login);
+    let user = UserService::get_by_login(&credentials.login).unwrap();
     let post = PostsService::add_post(request.title, request.content, user);
     let json = serde_json::to_string(&post).unwrap();
     Ok(content::Json(json))
@@ -50,17 +50,24 @@ pub fn get_comments(post_id: usize) -> content::Json<String> {
 pub fn login(
     input: rocket_contrib::json::Json<LoginRequest>,
 ) -> Result<content::Plain<String>, Unauthorized<String>> {
+    let err = Err(Unauthorized(Option::from(
+        "Invalid login or password".to_string(),
+    )));
     let request = input.into_inner();
     let user = UserService::get_by_login(&request.login);
+
+    if user.is_none() {
+        return err;
+    }
+
+    let user = user.unwrap();
 
     if request.login == user.login && request.password == user.password {
         let jwt = create_jwt(&user.login, &user.password, &user.rights).unwrap();
         return Ok(content::Plain(jwt));
     }
 
-    Err(Unauthorized(Option::from(
-        "Invalid login or password".to_string(),
-    )))
+    err
 }
 
 #[post("/register", format = "json", data = "<input>")]

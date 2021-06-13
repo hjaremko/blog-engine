@@ -47,7 +47,7 @@ const JWT_SECRET: &[u8; 6] = b"secret";
 
 pub fn create_jwt(login: &str, pass: &str, role: &Rights) -> Result<String, io::Error> {
     let expiration = Utc::now()
-        .checked_add_signed(chrono::Duration::seconds(60))
+        .checked_add_signed(chrono::Duration::minutes(60))
         .expect("valid timestamp")
         .timestamp();
 
@@ -95,6 +95,13 @@ pub fn auth_jwt(token: &str) -> Option<Credentials> {
     let password = &decoded.claims.password;
 
     let user = UserService::get_by_login(login);
+
+    if user.is_none() {
+        return None;
+    }
+
+    let user = user.unwrap();
+
     println!("{}, {}, {}", role.to_string(), login, password);
 
     let valid = user.login == *login && user.password == *password;

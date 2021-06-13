@@ -21,11 +21,9 @@ impl UserService {
         }
     }
 
-    pub fn get_by_login(login: &str) -> User {
+    pub fn get_by_login(login: &str) -> Option<User> {
         let users = UserRepository::get_all().unwrap();
-        let user = users.into_iter().find(|x| x.login == login).unwrap();
-
-        user
+        users.into_iter().find(|x| x.login == login)
     }
 
     pub fn create(request: RegisterRequest) -> User {
