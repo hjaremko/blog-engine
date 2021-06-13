@@ -24,7 +24,7 @@ fn index() -> Redirect {
 
 #[get("/<file..>", rank = 2)]
 fn build_dir(file: PathBuf) -> io::Result<NamedFile> {
-    NamedFile::open(Path::new("../frontend/frontend/build/").join(file))
+    NamedFile::open(Path::new("../frontend/build/").join(file))
 }
 
 pub mod db {

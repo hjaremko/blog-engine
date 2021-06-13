@@ -25,8 +25,8 @@ class Login extends Component {
             'Content-Type': 'application/json'
         };
 
-        // let url = '/api/login/';
-        let url = 'http://localhost:8000/api/login/';
+        // let url = 'http://localhost:8000/api/login/';
+        let url = '/api/login/';
         axios.post(url, {
             "login": this.state.loginInput,
             "password": this.state.passwordInput

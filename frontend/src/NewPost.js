@@ -24,8 +24,8 @@ class NewPost extends Component {
             'Authorization': 'Bearer ' + cookies.get('token')
         };
 
-        // let url = '/api/posts/';
-        let url = 'http://localhost:8000/api/posts/';
+        // let url = 'http://localhost:8000/api/posts/';
+        let url = '/api/posts/';
         axios.post(url, {
             "title": this.state.titleInput,
             "author_id": 1,

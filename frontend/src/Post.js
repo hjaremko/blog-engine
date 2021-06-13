@@ -24,7 +24,8 @@ class Post extends Component {
     }
 
     getComments(postId) {
-        let url = `http://localhost:8000/api/posts/comments/${postId}`;
+        // let url = `http://localhost:8000/api/posts/comments/${postId}`;
+        let url = `/api/posts/comments/${postId}`;
 
         axios.get(url)
             .then(res => {
@@ -87,8 +88,8 @@ class Post extends Component {
             'Authorization': 'Bearer ' + cookies.get('token')
         };
 
-        // let url = '/api/posts/';
-        let url = `http://localhost:8000/api/posts/comments/${idx}`;
+        // let url = `http://localhost:8000/api/posts/comments/${idx}`;
+        let url = `/api/posts/comments/${idx}`;
         axios.post(url,
             this.state.input
             , {headers}).then(res => {

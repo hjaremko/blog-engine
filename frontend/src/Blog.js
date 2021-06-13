@@ -37,8 +37,8 @@ class Blog extends Component {
     getBlogPosts(page, limit) {
         this.setState({loading: true});
 
-        // let url = `/api/posts/?page=${page}&limit=${limit}`;
-        let url = `http://localhost:8000/api/posts?page=${page}&limit=${limit}`;
+        // let url = `http://localhost:8000/api/posts?page=${page}&limit=${limit}`;
+        let url = `/api/posts?page=${page}&limit=${limit}`;
         axios.get(url)
             .then(res => {
                 let newPosts = res.data;
@@ -61,7 +61,8 @@ class Blog extends Component {
     }
 
     getComments(postId) {
-        let url = `http://localhost:8000/api/posts/comments/${postId}`;
+        // let url = `http://localhost:8000/api/posts/comments/${postId}`;
+        let url = `/api/posts/comments/${postId}`;
 
         axios.get(url)
             .then(res => {
