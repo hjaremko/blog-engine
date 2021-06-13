@@ -5,6 +5,7 @@ mod controller;
 mod model;
 mod repository;
 mod service;
+mod db;
 
 #[macro_use]
 extern crate rocket;
@@ -27,14 +28,6 @@ fn build_dir(file: PathBuf) -> io::Result<NamedFile> {
     NamedFile::open(Path::new("../frontend/build/").join(file))
 }
 
-pub mod db {
-    use once_cell::sync::Lazy;
-    use rusqlite::Connection;
-    use std::sync::Mutex;
-
-    pub static CONN: Lazy<Mutex<Connection>> =
-        Lazy::new(|| Mutex::new(Connection::open("blog.db").unwrap()));
-}
 
 fn main() {
     UserRepository::init_tables().unwrap();

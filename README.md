@@ -34,11 +34,19 @@ jak i komentarzy.
  - axios
  - react-parallax
  - universal-cookie
+ - Bootstrap 5
+ - FontAwesome
 
 ### Backend
  - Całość backendu napisana w języku **Rust**.
  - Wykorzystany framework: `rocket` w wersji `0.4.8`.
  - Baza danych **SQLite**.
+
+## Zrzuty ekranu
+![](screenshots/homepage.png)
+![](screenshots/comments.png)
+![](screenshots/newcomment.png)
+![](screenshots/invalidlogin.png)
 
 ## Przykładowe wywołania API
 
@@ -102,4 +110,23 @@ curl --location --request POST 'localhost:8000/api/posts/comments/13' \
 
 ## Budowa i uruchomienie projektu
 
+### Krok 1 - Budowa frontendu
+```
+cd frontend
+npm run build
+```
+
+### Krok 2 - Instalacja Rust nightly
+
+https://www.rust-lang.org/tools/install
+```
+rustup toolchain install nightly
+```
+
+### Krok 3 - Budowa i uruchomienie backendu
+```
+cargo +nightly run
+```
+
+Po kompilacji i uruchomieniu, klient oraz serwer są dostępne na porcie 8000.
 
