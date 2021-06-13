@@ -40,8 +40,15 @@ class Login extends Component {
                 this.props.history.push('/');
                 window.location.reload();
             }
-        ).catch(function (error) {
+        ).catch((error) => {
             console.log('Error: ', error.message);
+            let msg = error.message;
+
+            if (msg.includes("401")) {
+                msg = "Nieprawidłowy login lub hasło."
+            }
+
+            this.setState({errorMsg: msg});
         })
     }
 
@@ -53,9 +60,23 @@ class Login extends Component {
         this.setState({passwordInput: e.target.value});
     }
 
+    renderErrorCard() {
+        if (this.state.errorMsg === "") {
+            return;
+        }
+
+        return (
+            <div className="alert alert-danger" role="alert">
+                {this.state.errorMsg}
+            </div>
+        )
+    }
+
     render() {
         return (
             <div>
+                {this.renderErrorCard()}
+
                 <form>
                     <div className="mb-3 row">
                         <label htmlFor="staticEmail" className="col-sm-2 col-form-label">Login</label>
