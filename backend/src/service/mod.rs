@@ -1,5 +1,5 @@
-use crate::model::{NewPostRequest, Post, Rights, User, Comment, RegisterRequest};
-use crate::repository::{PostsRepository, UserRepository, CommentsRepository};
+use crate::model::{Comment, Post, RegisterRequest, Rights, User};
+use crate::repository::{CommentsRepository, PostsRepository, UserRepository};
 use chrono::{DateTime, Utc};
 
 pub struct UserService {}

@@ -1,16 +1,13 @@
-use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation, TokenData};
-use chrono::Utc;
 use crate::model::Rights;
-use std::io;
-use serde::{Deserialize, Serialize};
-use rocket::request::FromRequest;
-use std::convert::Infallible;
-use rocket::{Request, request, Outcome};
-use rocket::http::Status;
-use std::str::FromStr;
-use jsonwebtoken::errors::{Error, ErrorKind};
-use crate::repository::UserRepository;
 use crate::service::UserService;
+use chrono::Utc;
+use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation};
+use rocket::http::Status;
+use rocket::request::FromRequest;
+use rocket::{request, Outcome, Request};
+use serde::{Deserialize, Serialize};
+use std::io;
+use std::str::FromStr;
 
 pub struct Credentials {
     pub login: String,
@@ -33,7 +30,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for Credentials {
                 }
             }
             // token does not exist
-            None => Outcome::Failure((Status::Unauthorized, ()))
+            None => Outcome::Failure((Status::Unauthorized, ())),
         }
     }
 }
@@ -47,7 +44,6 @@ struct Claims {
 }
 
 const JWT_SECRET: &[u8; 6] = b"secret";
-
 
 pub fn create_jwt(login: &str, pass: &str, role: &Rights) -> Result<String, io::Error> {
     let expiration = Utc::now()
@@ -104,7 +100,10 @@ pub fn auth_jwt(token: &str) -> Option<Credentials> {
     let valid = user.login == *login && user.password == *password;
 
     if valid {
-        Some(Credentials { login: login.to_string(), rights: role })
+        Some(Credentials {
+            login: login.to_string(),
+            rights: role,
+        })
     } else {
         None
     }
