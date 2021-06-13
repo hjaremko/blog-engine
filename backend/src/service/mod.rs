@@ -60,9 +60,7 @@ impl PostsService {
         page.unwrap().into()
     }
 
-    pub fn add_post(request: NewPostRequest) -> Post {
-        let author = UserService::get(request.author_id);
-
+    pub fn add_post(title: String, content: String, author: User) -> Post {
         let now: DateTime<Utc> = Utc::now();
         let now = now.format("%F %R");
 
@@ -71,9 +69,9 @@ impl PostsService {
         let post = Post {
             id: PostsService::get_all().len() as i32,
             date: now.to_string(),
-            title: request.title,
+            title,
             author,
-            content: request.content,
+            content,
         };
 
         PostsRepository::add_post(&post).unwrap();

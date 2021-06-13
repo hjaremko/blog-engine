@@ -2,10 +2,9 @@ use rusqlite::types::{FromSql, FromSqlResult, ValueRef};
 use serde::{Deserialize, Serialize};
 use std::str::FromStr;
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
 pub enum Rights {
     Administrator,
-    Moderator,
     Common,
 }
 
@@ -13,7 +12,6 @@ impl ToString for Rights {
     fn to_string(&self) -> String {
         match self {
             Rights::Administrator => { "ADMIN" }
-            Rights::Moderator => { "MOD" }
             Rights::Common => { "USER" }
         }.to_string()
     }
@@ -25,7 +23,6 @@ impl FromStr for Rights {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "ADMIN" => Ok(Rights::Administrator),
-            "MOD" => Ok(Rights::Moderator),
             "USER" => Ok(Rights::Common),
             _ => Err(())
         }
@@ -54,7 +51,7 @@ pub struct Comment {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct NewPostRequest {
     pub title: String,
-    pub author_id: i32,
+    // pub author_id: i32,
     pub content: String,
 }
 

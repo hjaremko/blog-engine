@@ -1,4 +1,4 @@
-use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation};
+use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation, TokenData};
 use chrono::Utc;
 use crate::model::Rights;
 use std::io;
@@ -8,10 +8,16 @@ use std::convert::Infallible;
 use rocket::{Request, request, Outcome};
 use rocket::http::Status;
 use std::str::FromStr;
+use jsonwebtoken::errors::{Error, ErrorKind};
+use crate::repository::UserRepository;
+use crate::service::UserService;
 
-pub struct Token(String);
+pub struct Credentials {
+    pub login: String,
+    pub rights: Rights,
+}
 
-impl<'a, 'r> FromRequest<'a, 'r> for Token {
+impl<'a, 'r> FromRequest<'a, 'r> for Credentials {
     type Error = ();
 
     fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
@@ -19,11 +25,14 @@ impl<'a, 'r> FromRequest<'a, 'r> for Token {
         match token {
             Some(token) => {
                 println!("{}", token);
-                // check validity
-                Outcome::Success(Token(token.to_string()))
+
+                if let Some(c) = auth_token(&token) {
+                    Outcome::Success(c)
+                } else {
+                    Outcome::Failure((Status::Unauthorized, ()))
+                }
             }
             // token does not exist
-            // None => Outcome::Failure((Status::Unauthorized, Infallible::from(401)))
             None => Outcome::Failure((Status::Unauthorized, ()))
         }
     }
@@ -59,22 +68,44 @@ pub fn create_jwt(login: &str, pass: &str, role: &Rights) -> Result<String, io::
     // .map_err(|_| Error::JWTTokenCreationError)
 }
 
-pub fn auth_jwt(token: &str) {
+pub fn auth_token(token: &str) -> Option<Credentials> {
+    let parts = token.split_ascii_whitespace().collect::<Vec<&str>>();
+
+    if parts.len() != 2 {
+        return None;
+    }
+
+    if parts.get(0).unwrap() != &"Bearer" {
+        return None;
+    }
+
+    return auth_jwt(parts.get(1).unwrap());
+}
+
+pub fn auth_jwt(token: &str) -> Option<Credentials> {
     let decoded = decode::<Claims>(
         &token,
         &DecodingKey::from_secret(JWT_SECRET),
         &Validation::new(Algorithm::HS512),
-    ).unwrap();
+    );
 
+    if let Err(_) = decoded {
+        return None;
+    }
+
+    let decoded = decoded.unwrap();
     let role = Rights::from_str(&decoded.claims.role).unwrap();
     let login = &decoded.claims.login;
     let password = &decoded.claims.password;
-    let exp = &decoded.claims.exp;
 
-    let now = Utc::now()
-        .timestamp();
-
+    let user = UserService::get_by_login(login);
     println!("{}, {}, {}", role.to_string(), login, password);
-    println!("{} < {}", exp, now);
-    println!("{}", exp < &(now as usize));
+
+    let valid = user.login == *login && user.password == *password;
+
+    if valid {
+        Some(Credentials { login: login.to_string(), rights: role })
+    } else {
+        None
+    }
 }

@@ -73,10 +73,11 @@ impl PostsRepository {
         let conn = CONN.lock().unwrap();
         let mut stmt = conn.prepare(
             "select * from posts
-                 join users on posts.author
+                 join users u on author = u.id
                  order by date desc",
         )?;
         let post_iter = stmt.query_map([], |row| {
+            let rights: String = row.get(9)?;
             Ok(Post {
                 id: row.get(0)?,
                 date: row.get(1)?,
@@ -84,11 +85,10 @@ impl PostsRepository {
                 // author: row.get(3)?,
                 author: User {
                     id: row.get(5)?,
-                    name: row.get(6)?,
-                    rights: Rights::Administrator,
-                    // rights: row.get(7)?,
+                    name: row.get(8)?,
+                    rights: Rights::from_str(&rights).unwrap(),
                     password: "".to_string(),
-                    login: "".to_string()
+                    login: "".to_string(),
                 },
                 content: row.get(4)?,
             })
@@ -130,23 +130,24 @@ impl CommentsRepository {
     pub fn get_all_from_post(post_id: usize) -> Result<Vec<Comment>> {
         let conn = CONN.lock().unwrap();
         let mut stmt = conn.prepare(
-            "select * from comments
-                 join users u on comments.author_id = u.id
-                 where post_id = ?1"
+            "select c.id, c.date, u.id, u.name, u.rights, c.content from comments c
+                 join users u on c.author_id = u.id
+                 where c.post_id = ?1"
         )?;
 
         let comment_iter = stmt.query_map([post_id], |row| {
+            let r:String = row.get(4)?;
             Ok(Comment {
                 id: row.get(0)?,
                 date: row.get(1)?,
                 author: User {
-                    id: row.get(5)?,
-                    name: row.get(6)?,
-                    rights: Rights::Administrator, // todo
+                    id: row.get(2)?,
+                    name: row.get(3)?,
+                    rights: Rights::from_str(&r).unwrap(),
                     password: "".to_string(),
-                    login: "".to_string()
+                    login: "".to_string(),
                 },
-                content: row.get(3)?,
+                content: row.get(5)?,
             }
             )
         })?;

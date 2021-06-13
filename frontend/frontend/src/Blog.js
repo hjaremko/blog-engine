@@ -11,7 +11,7 @@ class Blog extends Component {
             comments: {},
             error: '',
             loading: true,
-            limit: 1,
+            limit: 2,
             page: 0,
         };
 
